@@ -1,0 +1,36 @@
+﻿<UserControl
+	x:Class="FPN.Views.InvoiceView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:vm="clr-namespace:FPN.ViewModels"
+	xmlns:local="clr-namespace:FPN.Views"
+	d:DataContext="{d:DesignInstance Type=vm:InvoiceViewModel,
+	                                 IsDesignTimeCreatable=True}"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+	<DockPanel x:Name="DockPanel">
+		<local:InvoiceDetailsView DockPanel.Dock="Top" />
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<!--  numbers  -->
+				<ColumnDefinition Width="Auto" />
+				<!--  splitter  -->
+				<ColumnDefinition Width="Auto" />
+				<!--  number details  -->
+				<ColumnDefinition Width="*" />
+				<!--  splitter  -->
+				<ColumnDefinition Width="Auto" />
+				<!--  service details  -->
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<local:NumbersView />
+			<GridSplitter Grid.Column="1" Style="{StaticResource VerticalGridSplitterStyle}" />
+			<local:NumberDetailsView Grid.Column="2" Invoice="{Binding Invoice}" SelectedNumber="{Binding SelectedNumber}" />
+			<GridSplitter Grid.Column="3" Style="{StaticResource VerticalGridSplitterStyle}" />
+		</Grid>
+	</DockPanel>
+</UserControl>
