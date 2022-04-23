@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using FPN.ViewModels;
+﻿using FPN.ViewModels;
 using System.Windows;
 
 namespace FPN.Views
@@ -9,10 +8,10 @@ namespace FPN.Views
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow()
+		public MainWindow(MainWindowViewModel viewModel)
 		{
 			InitializeComponent();
-			DataContext = ServiceLocator.Current.GetInstance<MainWindowViewModel>();
+			DataContext = viewModel;
 		}
 
 		private void Window_Drop(object sender, DragEventArgs e)

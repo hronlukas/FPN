@@ -11,7 +11,7 @@ using System.Windows.Data;
 
 namespace FPN.ViewModels
 {
-	internal class InvoiceViewModel : ViewModelBase
+	public class InvoiceViewModel : ViewModelBase
 	{
 		private readonly ICalculatorProvider calculatorProvider;
 		private string? filter;
@@ -43,7 +43,10 @@ namespace FPN.ViewModels
 		{
 			Invoice = invoice;
 			Numbers = CollectionViewSource.GetDefaultView(invoice.Numbers);
-			SelectedNumber = invoice.Numbers.FirstOrDefault();
+			if (invoice.Numbers.Count > 0)
+			{
+				SelectedNumber = invoice.Numbers[0];
+			}
 
 			Numbers.Filter = i =>
 			{
@@ -60,7 +63,7 @@ namespace FPN.ViewModels
 			Details = BuildDetails(invoice, actionsCalculator);
 		}
 
-		private IEnumerable BuildDetails(IInvoice invoice, IActionsCalculator actionsCalculator)
+		private static IEnumerable BuildDetails(IInvoice invoice, IActionsCalculator actionsCalculator)
 		{
 			var culture = System.Threading.Thread.CurrentThread.CurrentUICulture;
 			var freeSeconds = actionsCalculator.GetFreeSecondsAmount();

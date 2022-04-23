@@ -1,15 +1,14 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Autofac.Extras.CommonServiceLocator;
-using CommonServiceLocator;
-using FPN.Bussines;
+﻿using FPN.Bussines;
 using FPN.Bussines.Services;
 using FPN.Core;
 using FPN.Core.Mvvm;
+using FPN.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -24,7 +23,6 @@ namespace FPN
 	{
 		private static readonly ILogger logger;
 		private static readonly ILoggerFactory loggerFactory;
-		private IContainer? container;
 
 		static App()
 		{
@@ -37,9 +35,18 @@ namespace FPN
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 			Current.DispatcherUnhandledException += DispatcherOnUnhandledException;
 			TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+
+			Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+				.ConfigureServices((context, services) =>
+				{
+					ConfigureServices(services);
+				})
+				.Build();
 		}
 
-		protected override void OnStartup(StartupEventArgs e)
+		public static IHost? Host { get; private set; }
+
+		protected override async void OnStartup(StartupEventArgs e)
 		{
 			logger.LogDebug("Dispatcher managed thread identifier = {threadId}", Environment.CurrentManagedThreadId);
 
@@ -47,15 +54,20 @@ namespace FPN
 			logger.LogDebug(RenderCapabilityMessage, RenderCapability.Tier / 0x10000);
 			RenderCapability.TierChanged += (s, a) => logger.LogDebug(RenderCapabilityMessage, RenderCapability.Tier / 0x10000);
 
-			base.OnStartup(e);
+			await Host!.StartAsync();
 
-			ConfigureServices();
+			var mainWindow = Host.Services.GetRequiredService<MainWindow>();
+			mainWindow.Show();
+
+			base.OnStartup(e);
 		}
 
-		protected override void OnExit(ExitEventArgs e)
+		protected override async void OnExit(ExitEventArgs e)
 		{
-			var editor = container?.Resolve<IUserEditor>();
+			var editor = Host!.Services.GetRequiredService<IUserEditor>();
 			editor?.Save();
+
+			await Host!.StopAsync();
 			base.OnExit(e);
 		}
 
@@ -86,52 +98,35 @@ namespace FPN
 			HandleException(e.Exception.GetBaseException());
 		}
 
-		private void ConfigureServices()
+		private static void ConfigureServices(IServiceCollection services)
 		{
-			// The Microsoft.Extensions.DependencyInjection.ServiceCollection
-			// has extension methods provided by other .NET Core libraries to
-			// register services with DI.
-			var serviceCollection = new ServiceCollection();
-
-			// The Microsoft.Extensions.Logging package provides this one-liner
-			// to add logging services.
-			serviceCollection.AddLogging();
-
-			var containerBuilder = new ContainerBuilder();
-
-			// Once you've registered everything in the ServiceCollection, call
-			// Populate to bring those registrations into Autofac. This is
-			// just like a foreach over the list of things in the collection
-			// to add them to Autofac.
-			containerBuilder.Populate(serviceCollection);
-
-			// Make your Autofac registrations. Order is important!
-			// If you make them BEFORE you call Populate, then the
-			// registrations in the ServiceCollection will override Autofac
-			// registrations; if you make them AFTER Populate, the Autofac
-			// registrations will override. You can make registrations
-			// before or after Populate, however you choose.
-
-			// Logger
-			containerBuilder.RegisterInstance(loggerFactory).As<ILoggerFactory>();
-			containerBuilder.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>));
-
 			// Services
 			// todo
 
 			// View models
-			containerBuilder.RegisterAssemblyTypes(System.Reflection.Assembly.GetExecutingAssembly())
-				.Where(t => typeof(ViewModelBase).IsAssignableFrom(t));
+			AddViewModels(services);
 
 			// Modules
-			containerBuilder.RegisterModule<CoreModule>();
-			containerBuilder.RegisterModule<BussinesModule>();
+			services.AddCore();
+			services.AddBussines();
 
-			// Build container
-			container = containerBuilder.Build();
+			// Main window
+			services.AddSingleton<MainWindow>();
 
-			var serviceLocator = new AutofacServiceLocator(container);
-			ServiceLocator.SetLocatorProvider(() => serviceLocator);
+			// Set services provider to the ServiceLocator
+			ServiceLocator.SetLocatorProvider(services.BuildServiceProvider());
+		}
+
+		private static void AddViewModels(IServiceCollection services)
+		{
+			var viewModelTypes = System.Reflection.Assembly.GetExecutingAssembly()
+				.GetTypes()
+				.Where(t => typeof(ViewModelBase).IsAssignableFrom(t));
+
+			foreach (var type in viewModelTypes)
+			{
+				services.AddTransient(type);
+			}
 		}
 	}
 }

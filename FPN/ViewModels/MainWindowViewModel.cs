@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace FPN.ViewModels
 {
-	internal class MainWindowViewModel : ViewModelBase
+	public class MainWindowViewModel : ViewModelBase
 	{
 		private readonly ILogger logger;
 		private readonly IImportService importService;
