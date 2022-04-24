@@ -1,6 +1,6 @@
-﻿using CommonServiceLocator;
-using FPN.Bussines.Data;
+﻿using FPN.Bussines.Data;
 using FPN.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,12 +17,12 @@ namespace FPN.Views
 		public static readonly DependencyProperty SelectedNumberProperty =
 			DependencyProperty.Register(nameof(SelectedNumber), typeof(INumber), typeof(NumberDetailsView), new PropertyMetadata(OnSelectedNumberChanged));
 
-		private NumberDetailsViewModel numberDetailsViewModel;
+		private readonly NumberDetailsViewModel numberDetailsViewModel;
 
 		public NumberDetailsView()
 		{
 			InitializeComponent();
-			numberDetailsViewModel = ServiceLocator.Current.GetInstance<NumberDetailsViewModel>();
+			numberDetailsViewModel = App.Host!.Services.GetRequiredService<NumberDetailsViewModel>();
 			Root.DataContext = numberDetailsViewModel;
 		}
 

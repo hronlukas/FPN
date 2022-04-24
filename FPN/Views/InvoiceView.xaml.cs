@@ -1,5 +1,5 @@
-﻿using CommonServiceLocator;
-using FPN.Bussines.Data;
+﻿using FPN.Bussines.Data;
+using FPN.Core;
 using FPN.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +19,7 @@ namespace FPN.Views
 		public InvoiceView()
 		{
 			InitializeComponent();
-			invoiceViewModel = ServiceLocator.Current.GetInstance<InvoiceViewModel>();
+			invoiceViewModel = ServiceLocator.Current.GetRequiredService<InvoiceViewModel>();
 			DockPanel.DataContext = invoiceViewModel;
 		}
 

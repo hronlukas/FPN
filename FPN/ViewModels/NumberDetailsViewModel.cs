@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace FPN.ViewModels
 {
-	internal class NumberDetailsViewModel : ViewModelBase
+	public class NumberDetailsViewModel : ViewModelBase
 	{
 		private readonly ICalculatorProvider calculatorProvider;
 
@@ -31,7 +31,7 @@ namespace FPN.ViewModels
 			NumberDetails = BuildNumberDetails(actionsCalculator, selectedNumber);
 		}
 
-		private IList<ListItemData> BuildNumberDetails(IActionsCalculator actionsCalculator, INumber number)
+		private static IList<ListItemData> BuildNumberDetails(IActionsCalculator actionsCalculator, INumber number)
 		{
 			var nationalCalls = GetCallsAmount(actionsCalculator.GetNationalCalls(number));
 			var internationalCalls = GetCallsAmount(actionsCalculator.GetInterNationalCalls(number));
