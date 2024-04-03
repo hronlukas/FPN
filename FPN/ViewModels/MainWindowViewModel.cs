@@ -1,9 +1,9 @@
-﻿using FPN.Bussines.Data;
+﻿using CommunityToolkit.Mvvm.Input;
+using FPN.Bussines.Data;
 using FPN.Bussines.Services;
 using FPN.Core.Mvvm;
 using FPN.Core.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
 
