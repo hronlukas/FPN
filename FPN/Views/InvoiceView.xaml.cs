@@ -13,10 +13,7 @@ namespace FPN.Views
 		public static readonly DependencyProperty InvoiceProperty =
 			DependencyProperty.Register(nameof(Invoice), typeof(IInvoice), typeof(InvoiceView), new PropertyMetadata(OnInvoiceChanged));
 
-		public InvoiceView()
-		{
-			InitializeComponent();
-		}
+		public InvoiceView() => InitializeComponent();
 
 		public IInvoice Invoice
 		{
@@ -34,9 +31,6 @@ namespace FPN.Views
 			}
 		}
 
-		private void OnInvoiceChanged(IInvoice invoice)
-		{
-			ViewModel.SetInvoice(invoice);
-		}
+		private void OnInvoiceChanged(IInvoice invoice) => ViewModel.SetInvoice(invoice);
 	}
 }

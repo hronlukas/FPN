@@ -9,14 +9,9 @@ using System.Linq;
 
 namespace FPN.ViewModels
 {
-	public class NumberDetailsViewModel : ViewModelBase
+	public class NumberDetailsViewModel(ICalculatorProvider calculatorProvider) : ViewModelBase
 	{
-		private readonly ICalculatorProvider calculatorProvider;
-
-		public NumberDetailsViewModel(ICalculatorProvider calculatorProvider)
-		{
-			this.calculatorProvider = calculatorProvider;
-		}
+		private readonly ICalculatorProvider calculatorProvider = calculatorProvider;
 
 		public IEnumerable? NumberDetails { get; set; }
 
@@ -36,12 +31,12 @@ namespace FPN.ViewModels
 			var nationalCalls = GetCallsAmount(actionsCalculator.GetNationalCalls(number));
 			var internationalCalls = GetCallsAmount(actionsCalculator.GetInterNationalCalls(number));
 			var fpnCalls = GetCallsAmount(actionsCalculator.GetFpnCalls(number));
-			return new ListItemData[]
-			{
+			return
+			[
 				new ListItemData("Národní sítě", nationalCalls),
 				new ListItemData("Mezinárodní sítě", internationalCalls),
 				new ListItemData("FPN", fpnCalls),
-			};
+			];
 		}
 
 		private static TimeSpan GetCallsAmount(IEnumerable<ICall> calls)

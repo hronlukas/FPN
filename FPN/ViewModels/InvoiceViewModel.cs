@@ -11,15 +11,10 @@ using System.Windows.Data;
 
 namespace FPN.ViewModels
 {
-	public class InvoiceViewModel : ViewModelBase
+	public class InvoiceViewModel(ICalculatorProvider calculatorProvider) : ViewModelBase
 	{
-		private readonly ICalculatorProvider calculatorProvider;
+		private readonly ICalculatorProvider calculatorProvider = calculatorProvider;
 		private string? filter;
-
-		public InvoiceViewModel(ICalculatorProvider calculatorProvider)
-		{
-			this.calculatorProvider = calculatorProvider;
-		}
 
 		public IEnumerable? Details { get; set; }
 
@@ -78,15 +73,15 @@ namespace FPN.ViewModels
 			var totalFpnSmsUnits = sharedNumbers.Sum(n => actionsCalculator.GetFpnSms(n).Sum(a => a.Amount));
 			return new List<ListItemData>()
 			{
-				new ListItemData("Od", invoice.From.ToShortDateString()),
-				new ListItemData("Do", invoice.To.ToShortDateString()),
-				new ListItemData("Volné minuty", freeTimeSpan.TotalMinutes),
-				new ListItemData("Volné SMS", freeSms),
-				new ListItemData("Počet čísel se sdíleným tarifem", sharedNumbersCount),
-				new ListItemData("Počet volných minut / číslo", Math.Round(freeMinutesPerNumber)),
-				new ListItemData("Počet provolaných minut", totalCalledTimeSpan.TotalMinutes),
-				new ListItemData("Počet poslaných SMS do ostatních sítí", totalNationSmsUnits),
-				new ListItemData("Počet poslaných SMS do FPN", totalFpnSmsUnits),
+				new("Od", invoice.From.ToShortDateString()),
+				new("Do", invoice.To.ToShortDateString()),
+				new("Volné minuty", freeTimeSpan.TotalMinutes),
+				new("Volné SMS", freeSms),
+				new("Počet čísel se sdíleným tarifem", sharedNumbersCount),
+				new("Počet volných minut / číslo", Math.Round(freeMinutesPerNumber)),
+				new("Počet provolaných minut", totalCalledTimeSpan.TotalMinutes),
+				new("Počet poslaných SMS do ostatních sítí", totalNationSmsUnits),
+				new("Počet poslaných SMS do FPN", totalFpnSmsUnits),
 			}.AsReadOnly();
 		}
 	}

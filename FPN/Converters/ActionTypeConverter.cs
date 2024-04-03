@@ -11,23 +11,13 @@ namespace FPN.Converters
 
 		public static IValueConverter? Instance => instance ??= new ActionTypeConverter();
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
 		{
-			switch (value)
-			{
-				case ICall:
-					return "Call";
+			ICall => "Call",
+			ISms => "SMS",
+			_ => Binding.DoNothing,
+		};
 
-				case ISms:
-					return "SMS";
-			}
-
-			return Binding.DoNothing;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 	}
 }
