@@ -17,13 +17,9 @@ namespace FPN.Views
 		public static readonly DependencyProperty SelectedNumberProperty =
 			DependencyProperty.Register(nameof(SelectedNumber), typeof(INumber), typeof(NumberDetailsView), new PropertyMetadata(OnSelectedNumberChanged));
 
-		private readonly NumberDetailsViewModel numberDetailsViewModel;
-
 		public NumberDetailsView()
 		{
 			InitializeComponent();
-			numberDetailsViewModel = App.Host!.Services.GetRequiredService<NumberDetailsViewModel>();
-			Root.DataContext = numberDetailsViewModel;
 		}
 
 		public IInvoice Invoice
@@ -37,6 +33,8 @@ namespace FPN.Views
 			get { return (INumber)GetValue(SelectedNumberProperty); }
 			set { SetValue(SelectedNumberProperty, value); }
 		}
+
+		private NumberDetailsViewModel ViewModel => DataContext as NumberDetailsViewModel ?? throw new System.Exception("Failed to get view model");
 
 		private static void OnInvoiceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -58,7 +56,7 @@ namespace FPN.Views
 		{
 			if (SelectedNumber != null)
 			{
-				numberDetailsViewModel.SetData(invoice, SelectedNumber);
+				ViewModel.SetData(invoice, SelectedNumber);
 			}
 		}
 
@@ -66,7 +64,7 @@ namespace FPN.Views
 		{
 			if (Invoice != null)
 			{
-				numberDetailsViewModel.SetData(Invoice, n);
+				ViewModel.SetData(Invoice, n);
 			}
 		}
 	}

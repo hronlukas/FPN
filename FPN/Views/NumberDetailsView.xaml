@@ -5,13 +5,14 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:conv="clr-namespace:FPN.Converters"
+	xmlns:coremvvm="clr-namespace:FPN.Core.Mvvm;assembly=FPN.Core"
 	xmlns:vm="clr-namespace:FPN.ViewModels"
 	d:DataContext="{d:DesignInstance Type=vm:NumberDetailsViewModel,
 	                                 IsDesignTimeCreatable=True}"
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
-	<Grid x:Name="Root">
+	<Grid x:Name="Root" DataContext="{coremvvm:DependencyInjectionWpf Type=vm:NumberDetailsViewModel}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />

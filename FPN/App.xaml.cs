@@ -26,7 +26,7 @@ namespace FPN
 
 		static App()
 		{
-			loggerFactory = new LoggerFactory(new ILoggerProvider[] { new DebugLoggerProvider(), });
+			loggerFactory = new LoggerFactory([new DebugLoggerProvider(),]);
 			logger = loggerFactory.CreateLogger<App>();
 		}
 
@@ -42,6 +42,9 @@ namespace FPN
 					ConfigureServices(services);
 				})
 				.Build();
+
+			// Set service provider to static resolver to resolve correct view model as a data context in view
+			DependencyInjectionWpf.Resolver = Host.Services.GetRequiredService;
 		}
 
 		public static IHost? Host { get; private set; }
@@ -112,9 +115,6 @@ namespace FPN
 
 			// Main window
 			services.AddSingleton<MainWindow>();
-
-			// Set services provider to the ServiceLocator
-			ServiceLocator.SetLocatorProvider(services.BuildServiceProvider());
 		}
 
 		private static void AddViewModels(IServiceCollection services)
