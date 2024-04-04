@@ -34,7 +34,7 @@ namespace FPN.Views
 			set { SetValue(SelectedNumberProperty, value); }
 		}
 
-		private NumberDetailsViewModel ViewModel => DataContext as NumberDetailsViewModel ?? throw new System.Exception("Failed to get view model");
+		private NumberDetailsViewModel ViewModel => Root.DataContext as NumberDetailsViewModel ?? throw new System.Exception("Failed to get view model");
 
 		private static void OnInvoiceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{

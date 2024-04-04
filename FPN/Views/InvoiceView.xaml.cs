@@ -21,7 +21,7 @@ namespace FPN.Views
 			set { SetValue(InvoiceProperty, value); }
 		}
 
-		private InvoiceViewModel ViewModel => DataContext as InvoiceViewModel ?? throw new System.Exception("Failed to get view model");
+		private InvoiceViewModel ViewModel => DockPanel.DataContext as InvoiceViewModel ?? throw new System.Exception("Failed to get view model");
 
 		private static void OnInvoiceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
