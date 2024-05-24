@@ -1,6 +1,7 @@
 ﻿using FPN.Bussines.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FPN.Bussines.Services
 {
@@ -13,7 +14,7 @@ namespace FPN.Bussines.Services
 
 	public interface IUserEditor
 	{
-		void Save();
+		Task Save();
 	}
 
 	internal class UserProvider : IUserProvider, IUserEditor
@@ -24,13 +25,13 @@ namespace FPN.Bussines.Services
 		public UserProvider(IUserStorage storage)
 		{
 			this.storage = storage;
-			users = storage?.Load().ToList();
+			users = storage.Load().GetAwaiter().GetResult().ToList();
 		}
 
 		public IUser GetUserByPhone(string number)
 		{
 			var user = users.FirstOrDefault(x => x.Number == number);
-			if (user == null)
+			if (user is null)
 			{
 				// Unknown user
 				user = new User { Number = number, Name = number, };
@@ -44,9 +45,9 @@ namespace FPN.Bussines.Services
 			return users;
 		}
 
-		public void Save()
+		public async Task Save()
 		{
-			storage.Save(users);
+			await storage.Save(users);
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace FPN
 		protected override async void OnExit(ExitEventArgs e)
 		{
 			IUserEditor editor = host.Services.GetRequiredService<IUserEditor>();
-			editor.Save();
+			await editor.Save();
 
 			await host.StopAsync();
 			host.Dispose();

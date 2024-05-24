@@ -1,12 +1,13 @@
 ﻿using FPN.Bussines.Data;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FPN.Bussines.Services
 {
 	internal interface IUserStorage
 	{
-		IEnumerable<IUser> Load();
+		Task<IEnumerable<IUser>> Load();
 
-		void Save(IEnumerable<IUser> users);
+		Task Save(IEnumerable<IUser> users);
 	}
 }

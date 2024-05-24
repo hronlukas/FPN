@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Utf8Json;
 
 namespace FPN.Bussines.Services
@@ -10,7 +11,7 @@ namespace FPN.Bussines.Services
 	{
 		private const string filePath = "users.json";
 
-		public IEnumerable<IUser> Load()
+		public async Task<IEnumerable<IUser>> Load()
 		{
 			if (!File.Exists(filePath))
 			{
@@ -18,13 +19,13 @@ namespace FPN.Bussines.Services
 			}
 
 			using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-			return JsonSerializer.Deserialize<List<User>>(fs);
+			return await JsonSerializer.DeserializeAsync<List<User>>(fs);
 		}
 
-		public void Save(IEnumerable<IUser> users)
+		public async Task Save(IEnumerable<IUser> users)
 		{
 			using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-			JsonSerializer.Serialize(fs, users.Cast<User>().ToList());
+			await JsonSerializer.SerializeAsync(fs, users.Cast<User>().ToList());
 		}
 	}
 }
