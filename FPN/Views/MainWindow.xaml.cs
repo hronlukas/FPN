@@ -8,10 +8,9 @@ namespace FPN.Views
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow(MainWindowViewModel viewModel)
+		public MainWindow()
 		{
 			InitializeComponent();
-			DataContext = viewModel;
 		}
 
 		private async void Window_Drop(object sender, DragEventArgs e)

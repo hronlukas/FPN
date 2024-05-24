@@ -69,9 +69,6 @@ namespace FPN
 
 			await host.StartAsync();
 
-			MainWindow mainWindow = host.Services.GetRequiredService<MainWindow>();
-			mainWindow.Show();
-
 			base.OnStartup(e);
 		}
 
