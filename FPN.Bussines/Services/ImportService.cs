@@ -1,6 +1,7 @@
 ﻿using FPN.Bussines.Data;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace FPN.Bussines.Services
@@ -17,11 +18,11 @@ namespace FPN.Bussines.Services
 			this.transformer = converter;
 		}
 
-		public IInvoice Import(string filePath)
+		public async Task<IInvoice> Import(string filePath)
 		{
 			logger.LogInformation("Import from file {filePath}", filePath);
 			using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-			return Import(fs);
+			return await Task.Run(() => Import(fs));
 		}
 
 		private IInvoice Import(Stream input)

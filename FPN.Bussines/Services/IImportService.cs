@@ -1,9 +1,10 @@
 ﻿using FPN.Bussines.Data;
+using System.Threading.Tasks;
 
 namespace FPN.Bussines.Services
 {
 	public interface IImportService
 	{
-		IInvoice Import(string filePath);
+		Task<IInvoice> Import(string filePath);
 	}
 }

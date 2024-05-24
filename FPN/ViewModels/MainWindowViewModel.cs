@@ -5,6 +5,7 @@ using FPN.Core.Mvvm;
 using FPN.Core.Services;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace FPN.ViewModels
@@ -25,12 +26,12 @@ namespace FPN.ViewModels
 			ImportCommand = new RelayCommand(OnImport);
 		}
 
-		private void OnImport()
+		private async void OnImport()
 		{
 			var filePath = dialogService.ShowOpenFileDialog("XML Files|*.xml|All Files|*.*");
 			if (!string.IsNullOrEmpty(filePath))
 			{
-				Import(filePath);
+				await Import(filePath);
 			}
 		}
 
@@ -40,12 +41,12 @@ namespace FPN.ViewModels
 
 		public IInvoice? SelectedInvoice { get; set; }
 
-		internal void Import(string filePath)
+		internal async Task Import(string filePath)
 		{
 			try
 			{
 				ErrorMessage = string.Empty;
-				SelectedInvoice = importService.Import(filePath);
+				SelectedInvoice = await importService.Import(filePath);
 				OnPropertyChanged(nameof(SelectedInvoice));
 			}
 			catch (Exception ex)
