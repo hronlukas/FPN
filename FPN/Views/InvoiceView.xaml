@@ -12,7 +12,7 @@
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
-	<DockPanel x:Name="DockPanel" DataContext="{coremvvm:DependencyInjectionWpf Type=vm:InvoiceViewModel}">
+	<DockPanel x:Name="DockPanel" DataContext="{coremvvm:ResolveViewModel Type=vm:InvoiceViewModel}">
 		<local:InvoiceDetailsView DockPanel.Dock="Top" />
 		<Grid>
 			<Grid.ColumnDefinitions>

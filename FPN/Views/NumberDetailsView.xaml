@@ -12,7 +12,7 @@
 	d:DesignHeight="450"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
-	<Grid x:Name="Root" DataContext="{coremvvm:DependencyInjectionWpf Type=vm:NumberDetailsViewModel}">
+	<Grid x:Name="Root" DataContext="{coremvvm:ResolveViewModel Type=vm:NumberDetailsViewModel}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />

@@ -3,7 +3,7 @@ using System.Windows.Markup;
 
 namespace FPN.Core.Mvvm
 {
-	public class DependencyInjectionWpf : MarkupExtension
+	public class ResolveViewModel : MarkupExtension
 	{
 		public static Func<Type, object>? Resolver { get; set; }
 

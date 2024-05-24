@@ -46,7 +46,7 @@ namespace FPN
 				.Build();
 
 			// Set service provider to static resolver to resolve correct view model as a data context in view
-			DependencyInjectionWpf.Resolver = host.Services.GetRequiredService;
+			ResolveViewModel.Resolver = host.Services.GetRequiredService;
 		}
 
 		protected override async void OnExit(ExitEventArgs e)
