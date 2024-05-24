@@ -24,6 +24,8 @@ namespace FPN
 		private static readonly ILogger logger;
 		private static readonly ILoggerFactory loggerFactory;
 
+		private readonly IHost host;
+
 		static App()
 		{
 			loggerFactory = new LoggerFactory([new DebugLoggerProvider(),]);
@@ -36,7 +38,7 @@ namespace FPN
 			Current.DispatcherUnhandledException += DispatcherOnUnhandledException;
 			TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 
-			Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+			host = Host.CreateDefaultBuilder()
 				.ConfigureServices((context, services) =>
 				{
 					ConfigureServices(services);
@@ -44,10 +46,18 @@ namespace FPN
 				.Build();
 
 			// Set service provider to static resolver to resolve correct view model as a data context in view
-			DependencyInjectionWpf.Resolver = Host.Services.GetRequiredService;
+			DependencyInjectionWpf.Resolver = host.Services.GetRequiredService;
 		}
 
-		public static IHost? Host { get; private set; }
+		protected override async void OnExit(ExitEventArgs e)
+		{
+			IUserEditor editor = host.Services.GetRequiredService<IUserEditor>();
+			editor.Save();
+
+			await host.StopAsync();
+			host.Dispose();
+			base.OnExit(e);
+		}
 
 		protected override async void OnStartup(StartupEventArgs e)
 		{
@@ -57,21 +67,40 @@ namespace FPN
 			logger.LogDebug(RenderCapabilityMessage, RenderCapability.Tier / 0x10000);
 			RenderCapability.TierChanged += (s, a) => logger.LogDebug(RenderCapabilityMessage, RenderCapability.Tier / 0x10000);
 
-			await Host!.StartAsync();
+			await host.StartAsync();
 
-			var mainWindow = Host.Services.GetRequiredService<MainWindow>();
+			MainWindow mainWindow = host.Services.GetRequiredService<MainWindow>();
 			mainWindow.Show();
 
 			base.OnStartup(e);
 		}
 
-		protected override async void OnExit(ExitEventArgs e)
+		private static void AddViewModels(IServiceCollection services)
 		{
-			var editor = Host!.Services.GetRequiredService<IUserEditor>();
-			editor?.Save();
+			var viewModelTypes = System.Reflection.Assembly.GetExecutingAssembly()
+				.GetTypes()
+				.Where(t => typeof(ViewModelBase).IsAssignableFrom(t));
 
-			await Host!.StopAsync();
-			base.OnExit(e);
+			foreach (var type in viewModelTypes)
+			{
+				services.AddTransient(type);
+			}
+		}
+
+		private static void ConfigureServices(IServiceCollection services)
+		{
+			// Services
+			// todo
+
+			// View models
+			AddViewModels(services);
+
+			// Modules
+			services.AddCore();
+			services.AddBussines();
+
+			// Main window
+			services.AddSingleton<MainWindow>();
 		}
 
 		private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs args)
@@ -99,34 +128,6 @@ namespace FPN
 			e.SetObserved();
 
 			HandleException(e.Exception.GetBaseException());
-		}
-
-		private static void ConfigureServices(IServiceCollection services)
-		{
-			// Services
-			// todo
-
-			// View models
-			AddViewModels(services);
-
-			// Modules
-			services.AddCore();
-			services.AddBussines();
-
-			// Main window
-			services.AddSingleton<MainWindow>();
-		}
-
-		private static void AddViewModels(IServiceCollection services)
-		{
-			var viewModelTypes = System.Reflection.Assembly.GetExecutingAssembly()
-				.GetTypes()
-				.Where(t => typeof(ViewModelBase).IsAssignableFrom(t));
-
-			foreach (var type in viewModelTypes)
-			{
-				services.AddTransient(type);
-			}
 		}
 	}
 }
